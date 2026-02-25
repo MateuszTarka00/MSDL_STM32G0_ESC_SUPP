@@ -7,11 +7,6 @@
 
 #include "confInputs.h"
 
-bool getTeachInput(void)
-{
-	return HAL_GPIO_ReadPin(TEACH_INPUT_GPIO_Port, TEACH_INPUT_Pin);
-}
-
 bool getStandControl(void)
 {
 	return HAL_GPIO_ReadPin(STAND_CONTROL_GPIO_Port, STAND_CONTROL_Pin);

@@ -124,4 +124,9 @@ void rotationsSaveParameters(void)
 	flash_parametersSave();
 }
 
+void HAL_GPIO_EXTI_Rising_Callback(uint16_t GPIO_Pin)
+{
+	incrementRotationsNumber(GPIO_Pin);
+}
+
 

@@ -67,10 +67,10 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : SAFETY_END_Pin TEACH_FAST_Pin TEACH_SLOW_Pin CHECK_UP_Pin
-                           CHECK_DOWN_Pin */
-  GPIO_InitStruct.Pin = SAFETY_END_Pin|TEACH_FAST_Pin|TEACH_SLOW_Pin|CHECK_UP_Pin
-                          |CHECK_DOWN_Pin;
+  /*Configure GPIO pins : SAFETY_END_Pin TEACH_FAST_Pin FACTORY_RESET_Pin TEACH_SLOW_Pin
+                           CHECK_UP_Pin CHECK_DOWN_Pin */
+  GPIO_InitStruct.Pin = SAFETY_END_Pin|TEACH_FAST_Pin|FACTORY_RESET_Pin|TEACH_SLOW_Pin
+                          |CHECK_UP_Pin|CHECK_DOWN_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
