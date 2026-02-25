@@ -17,25 +17,10 @@ typedef struct
 	uint32_t step;
 }Flash_RotationsPerSecond;
 
-typedef struct
-{
-	uint32_t parameterLooserTime;
-	uint32_t parameterEngineTime;
-	uint32_t parameterContactorTime;
-	uint32_t parameterFastTime;
-	uint32_t parameterSlowTime;
-	uint32_t parameterStarTriangleTime;
-	uint8_t parameterEngineControl;
-	uint8_t parameterAutoStop;
-	uint8_t parameterReleasing;
-	uint8_t parameterTrafficDirectionSignals;
-	uint8_t parameterLightning;
-}Flash_settingsValues;
 
 typedef struct __attribute__((packed))
 {
 	uint32_t magic;
-	Flash_settingsValues flash_settingsValues;
 	Flash_RotationsPerSecond flash_RotationsPerMinuteSlow;
 	Flash_RotationsPerSecond flash_RotationsPerMinuteFast;
 	uint32_t crc;

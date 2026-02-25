@@ -24,7 +24,9 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "softwareTimer_ms.h"
+#include "externalWatchdog.h"
+#include "systemStartup.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -91,7 +93,9 @@ int main(void)
   MX_IWDG_Init();
   MX_TIM14_Init();
   /* USER CODE BEGIN 2 */
-
+  HAL_TIM_Base_Start_IT(&htim14);
+  initWatchdogTimerInit();
+  startupFunction();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -145,7 +149,18 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+  /* USER CODE BEGIN Callback 0 */
 
+  /* USER CODE END Callback 0 */
+  /* USER CODE BEGIN Callback 1 */
+  if(htim->Instance == TIM17)
+  {
+	  timersHandler();
+  }
+  /* USER CODE END Callback 1 */
+}
 /* USER CODE END 4 */
 
 /**
