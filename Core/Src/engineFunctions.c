@@ -10,6 +10,10 @@
 #include "confInputs.h"
 #include "sensors.h"
 #include "flash.h"
+#include "mainCpuCommunication.h"
+#include "softwareTimer_ms.h"
+
+SoftwareTimerHandler checkSpeedTimer;
 
 volatile uint32_t engineRotationTemporary = 0;
 volatile uint32_t stepRotationTemporary = 0;
@@ -25,6 +29,13 @@ RotationsPerMinute rotationsPerMinuteGiven =
 		{0, 0},
 		{0, 0}
 };
+
+void initSpeedTimer(void)
+{
+	deInitSoftwareTimer(&checkSpeedTimer);
+	initSoftwareTimer(&checkSpeedTimer, SPEED_CHECK_MS, saveMeasuredRotationsValueTimerCallback, TRUE, &rotationsPerMinuteReal);
+	startSoftwareTimer(&checkSpeedTimer);
+}
 
 void incrementRotationsNumber(uint16_t GPIO_Pin)
 {
@@ -52,12 +63,12 @@ void saveMeasuredRotationsValueTimerCallback(RotationsPerMinute *rotationsPerMin
 
 	if(checkTargetFrequencyReached())
 	{
-		if(highSpeedSet)
+		if(getFastSpeedState())
 		{
 			rotationsPerMinute->engine.fastTime = engineRotationTemporary;
 			rotationsPerMinute->step.fastTime = stepRotationTemporary;
 		}
-		else
+		else if(getSlowSpeedState())
 		{
 			rotationsPerMinute->engine.slowTime = engineRotationTemporary;
 			rotationsPerMinute->step.slowTime = stepRotationTemporary;
@@ -65,7 +76,6 @@ void saveMeasuredRotationsValueTimerCallback(RotationsPerMinute *rotationsPerMin
 	}
 
 	engineRotationTemporary = 0;
-	handrailRotationTemporary = 0;
 	stepRotationTemporary = 0;
 
 	// Enable
@@ -75,29 +85,60 @@ void saveMeasuredRotationsValueTimerCallback(RotationsPerMinute *rotationsPerMin
 
 bool checkSetFrequency(void)
 {
-	if(highSpeedSet)
+	bool rotationsState = TRUE;
+
+	if(getFastSpeedState())
 	{
-		if(	(checkErrorRange(rotationsPerMinuteReal.engine.fastTime,  rotationsPerMinuteGiven.engine.fastTime) || getRotationControl()) &&
-			(checkErrorRange(rotationsPerMinuteReal.step.fastTime, rotationsPerMinuteGiven.step.fastTime) || getStandControl()))
+		if(checkErrorRange(rotationsPerMinuteReal.engine.fastTime,  rotationsPerMinuteGiven.engine.fastTime) || getRotationControl())
 		{
-			return TRUE;
+			setRotationOk(TRUE);
 		}
-	}
-	else
-	{
-		if(	checkErrorRange(rotationsPerMinuteReal.engine.slowTime,  rotationsPerMinuteGiven.engine.slowTime) &&
-			checkErrorRange(rotationsPerMinuteReal.step.slowTime, rotationsPerMinuteGiven.step.slowTime))
+		else
 		{
-			return TRUE;
+			setRotationOk(FALSE);
+			rotationsState = FALSE;
+		}
+
+		if(checkErrorRange(rotationsPerMinuteReal.step.fastTime, rotationsPerMinuteGiven.step.fastTime) || getStandControl())
+		{
+			setStandOk(TRUE);
+		}
+		else
+		{
+			setStandOk(FALSE);
+			rotationsState = FALSE;
+		}
+
+	}
+	else if(getSlowSpeedState())
+	{
+		if(checkErrorRange(rotationsPerMinuteReal.engine.slowTime,  rotationsPerMinuteGiven.engine.slowTime) || getRotationControl())
+		{
+			setRotationOk(TRUE);
+		}
+		else
+		{
+			setRotationOk(FALSE);
+			rotationsState = FALSE;
+		}
+
+		if(checkErrorRange(rotationsPerMinuteReal.step.slowTime, rotationsPerMinuteGiven.step.slowTime) || getStandControl())
+		{
+			setStandOk(TRUE);
+		}
+		else
+		{
+			setStandOk(FALSE);
+			rotationsState = FALSE;
 		}
 	}
 
-	return FALSE;
+	return rotationsState;
 }
 
 bool checkErrorRange(uint32_t real, uint32_t given)
 {
-	if((real <= (given + FREQUENCY_ERROR_RANGE)) || (real >= (given - FREQUENCY_ERROR_RANGE)))
+	if((real <= (given + (given/FREQUENCY_ERROR_RANGE))) || (real >= (given - (given/FREQUENCY_ERROR_RANGE))))
 	{
 		return TRUE;
 	}

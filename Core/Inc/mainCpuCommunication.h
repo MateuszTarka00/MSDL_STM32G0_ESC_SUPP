@@ -18,5 +18,7 @@ bool getTeachFast(void);
 bool getTeachSlow(void);
 bool getFactoryReset(void);
 bool getTeachInput(void);
-
+bool getFastSpeedState(void);
+bool getSlowSpeedState(void);
+bool getEndTeaching(void);
 #endif /* INC_MAINCPUCOMMUNICATION_H_ */

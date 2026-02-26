@@ -47,3 +47,18 @@ bool getTeachInput(void)
 {
 	return HAL_GPIO_ReadPin(TEACH_INPUT_GPIO_Port, TEACH_INPUT_Pin);
 }
+
+bool getFastSpeedState(void)
+{
+	return HAL_GPIO_ReadPin(FAST_SPEED_GPIO_Port, FAST_SPEED_Pin);
+}
+
+bool getSlowSpeedState(void)
+{
+	return HAL_GPIO_ReadPin(SLOW_SPEED_GPIO_Port, SLOW_SPEED_Pin);
+}
+
+bool getEndTeaching(void)
+{
+	return HAL_GPIO_ReadPin(END_TEACHING_GPIO_Port, END_TEACHING_Pin);
+}

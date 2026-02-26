@@ -27,6 +27,11 @@
 #include "softwareTimer_ms.h"
 #include "externalWatchdog.h"
 #include "systemStartup.h"
+#include "mainCpuCommunication.h"
+#include "teachSpeed.h"
+#include "flash.h"
+#include "engineFunctions.h"
+#include "sensors.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -100,10 +105,35 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  bool rotationsState = TRUE;
   while (1)
   {
-    /* USER CODE END WHILE */
+	  if(programState == TEACHING_STATE)
+	  {
+		  teachStateMachineHandler();
+	  }
+	  else
+	  {
+		  if(programState == INSPECTION_MODE)
+		  {
+			  setRotationOk(TRUE);
+			  setStandOk(TRUE);
+		  }
+		  else
+		  {
+			  setRotationOk(checkSetFrequency());
+			  setStandOk(checkSetFrequency());
+			  rotationsState = checkSetFrequency();
+		  }
 
+		  setSafetyOk(checkSafetyOk());
+	  }
+
+	  if(getFactoryReset())
+	  {
+		  flash_factoryReset();
+	  }
+    /* USER CODE END WHILE */
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */

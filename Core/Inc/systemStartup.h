@@ -10,6 +10,15 @@
 
 #include "main.h"
 
+typedef enum
+{
+	TEACHING_STATE,
+	NORMAL_MODE,
+	INSPECTION_MODE,
+}ProgramStates;
+
+extern ProgramStates programState;
+
 void startupFunction(void);
 
 #endif /* INC_SYSTEMSTARTUP_H_ */

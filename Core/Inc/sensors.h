@@ -11,5 +11,7 @@
 #include "main.h"
 
 bool checkTargetFrequencyReached(void);
+bool checkInspectionMode(void);
+bool checkSafetyOk(void);
 
 #endif /* INC_SENSORS_H_ */

@@ -11,16 +11,11 @@
 #include "main.h"
 #include "softwareTimer_ms.h"
 
-#define FREQUENCY_ERROR_RANGE 			10
-#define FAST_SPEED_TIME_MS				60000
-#define SPEED_CHANGE_TIMEOUT_MS			10000
-#define CHAIN_MOTOR_ERROR_TIMEOUT_MS 	1000
+#define FREQUENCY_ERROR_RANGE 	10
+#define SPEED_CHECK_MS			1000
 
 extern volatile uint32_t engineRotationTemporary;
-extern volatile uint32_t handrailRotationTemporary;
 extern volatile uint32_t stepRotationTemporary;
-extern volatile bool highSpeedSet;
-extern volatile bool slowSpeedSet;
 
 typedef struct
 {
@@ -37,7 +32,7 @@ typedef struct
 extern RotationsPerMinute rotationsPerMinuteReal;
 extern RotationsPerMinute rotationsPerMinuteGiven;
 
-void initEngineTimers(void);
+void initSpeedTimer(void);
 void saveMeasuredRotationsValueTimerCallback(RotationsPerMinute *rotationsPerMinute);
 void incrementRotationsNumber(uint16_t GPIO_Pin);
 void enableFastSpeed(void);

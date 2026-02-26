@@ -77,6 +77,12 @@ void Error_Handler(void);
 #define TEACH_FAST_GPIO_Port GPIOB
 #define FACTORY_RESET_Pin GPIO_PIN_15
 #define FACTORY_RESET_GPIO_Port GPIOB
+#define FAST_SPEED_Pin GPIO_PIN_8
+#define FAST_SPEED_GPIO_Port GPIOA
+#define SLOW_SPEED_Pin GPIO_PIN_9
+#define SLOW_SPEED_GPIO_Port GPIOA
+#define END_TEACHING_Pin GPIO_PIN_6
+#define END_TEACHING_GPIO_Port GPIOC
 #define IN_FREQ_Pin GPIO_PIN_7
 #define IN_FREQ_GPIO_Port GPIOC
 #define WATCHDOG_OUT_Pin GPIO_PIN_15
