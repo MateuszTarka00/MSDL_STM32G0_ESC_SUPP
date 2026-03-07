@@ -15,10 +15,31 @@
 SoftwareTimerHandler teachTimer;
 TeachStateMachine teachState = PREPARATION;
 
+static uint32_t gapsBetweenSteps = 0;
+static uint32_t stepsCounted = 0;
+
 void initTeachProcedure(void)
 {
 	deInitSoftwareTimer(&teachTimer);
 	initSoftwareTimer(&teachTimer, TEACH_TIME_MS, saveMeasuredRotationsValueTimerCallback, FALSE, &rotationsPerMinuteGiven);
+}
+
+void calculateTeachedSpeeds(bool slowFast)
+{
+	if(slowFast)
+	{
+		rotationsPerMinuteGiven.engine.fastTime = rotationsPerMinuteGiven.engine.fastTime/10;
+		rotationsPerMinuteGiven.step.fastTime = gapsBetweenSteps/stepsCounted;
+	}
+	else
+	{
+		rotationsPerMinuteGiven.engine.slowTime = rotationsPerMinuteGiven.engine.slowTime/10;
+		rotationsPerMinuteGiven.step.slowTime = gapsBetweenSteps/stepsCounted;
+	}
+
+	gapsBetweenSteps = 0;
+	stepsCounted = 0;
+
 }
 
 void teachStateMachineHandler(void)
@@ -45,6 +66,7 @@ void teachStateMachineHandler(void)
 			if(teachTimer.start == FALSE)
 			{
 				teachState = SLOW_SPEED_CONFIRMATION;
+				calculateTeachedSpeeds(FALSE);
 				setSpeedReady(FALSE);
 			}
 			break;
@@ -52,11 +74,11 @@ void teachStateMachineHandler(void)
 		case SLOW_SPEED_CONFIRMATION:
 			if(getTeachFast())
 			{
-				teachState = WAIT_FOR_SLOW_SPEED;
+				teachState = WAIT_FOR_FAST_SPEED;
 			}
 			else if(getTeachSlow())
 			{
-				teachState = WAIT_FOR_FAST_SPEED;
+				teachState = WAIT_FOR_SLOW_SPEED;
 			}
 			break;
 
@@ -73,6 +95,7 @@ void teachStateMachineHandler(void)
 			if(teachTimer.start == FALSE)
 			{
 				teachState = FAST_SPEED_CONFIRMATION;
+				calculateTeachedSpeeds(TRUE);
 				setSpeedReady(FALSE);
 			}
 			break;
@@ -80,20 +103,65 @@ void teachStateMachineHandler(void)
 		case FAST_SPEED_CONFIRMATION:
 			if(getTeachFast())
 			{
-				teachState = WAIT_FOR_SLOW_SPEED;
+				teachState = WAIT_FOR_FAST_SPEED;
 			}
 			else if(getEndTeaching())
 			{
-				teachState = WAIT_FOR_SLOW_SPEED;
+				teachState = END;
 			}
 			break;
 
 		case END:
-			programState = NORMAL_MODE;
 			deInitSoftwareTimer(&teachTimer);
 			initSpeedTimer();
 			rotationsSaveParameters();
 			break;
+
+		case WAIT_FOR_RESET:
+			break;
+	}
+}
+
+void stepsTeachExtiCallback(uint16_t GPIO_Pin)
+{
+	static bool steps1 = FALSE;
+	static bool steps2 = FALSE;
+	static uint32_t gapBetweenStepsTemp = 0;
+
+	if(teachState == SLOW_SPEED_TIME || teachState == FAST_SPEED_TIME)
+	{
+
+		if(GPIO_Pin == MIS_ST2_Pin)
+		{
+			if(steps1)
+			{
+				gapBetweenStepsTemp = xTaskGetTickCount() - gapBetweenStepsTemp;
+				gapsBetweenSteps += gapBetweenStepsTemp;
+				gapBetweenStepsTemp = 0;
+			}
+			else
+			{
+				gapBetweenStepsTemp = HAL_GetTick();
+				stepsCounted++;
+				steps2 = TRUE;
+			}
+		}
+		else if(GPIO_Pin == MIS_ST1_Pin)
+		{
+			if(steps2)
+			{
+				steps2 = FALSE;
+				gapBetweenStepsTemp = xTaskGetTickCount() - gapBetweenStepsTemp;
+				gapsBetweenSteps += gapBetweenStepsTemp;
+				gapBetweenStepsTemp = 0;
+			}
+			else
+			{
+				gapBetweenStepsTemp = xTaskGetTickCount();
+				stepsCounted++;
+				steps1 = TRUE;
+			}
+		}
 	}
 }
 

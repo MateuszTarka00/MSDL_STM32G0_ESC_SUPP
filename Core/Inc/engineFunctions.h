@@ -13,9 +13,9 @@
 
 #define FREQUENCY_ERROR_RANGE 	10
 #define SPEED_CHECK_MS			1000
+#define SPEED_CHANGE_DELAY_MS	1500
 
 extern volatile uint32_t engineRotationTemporary;
-extern volatile uint32_t stepRotationTemporary;
 
 typedef struct
 {
@@ -41,5 +41,6 @@ bool checkSetFrequency(void);
 bool checkErrorRange(uint32_t real, uint32_t given);
 void rotationsLoadParameters(void);
 void rotationsSaveParameters(void);
+void setStandControlTimer(void);
 
 #endif /* INC_ENGINEFUNCTIONS_H_ */

@@ -103,6 +103,8 @@ void Error_Handler(void);
 #define STAND_OK_GPIO_Port GPIOB
 #define ROTATION_OK_Pin GPIO_PIN_6
 #define ROTATION_OK_GPIO_Port GPIOB
+#define SOFTWARE_STOP_Pin GPIO_PIN_7
+#define SOFTWARE_STOP_GPIO_Port GPIOB
 #define CHECK_UP_Pin GPIO_PIN_8
 #define CHECK_UP_GPIO_Port GPIOB
 #define CHECK_DOWN_Pin GPIO_PIN_9

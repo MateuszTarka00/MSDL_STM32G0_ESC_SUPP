@@ -10,7 +10,7 @@
 #include "mainCpuCommunication.h"
 #include <string.h>
 
-#define FLASH_PAGE 			200
+#define FLASH_PAGE 			15
 #define FLASH_BASE_ADDR     0x08000000U
 #define FLASH_MAGIC         0xDEADBEEFUL
 #define FLASH_DATA_SIZE (sizeof(Flash_parametersToSave) - sizeof(uint32_t))

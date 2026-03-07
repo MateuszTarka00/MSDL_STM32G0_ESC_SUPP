@@ -22,9 +22,11 @@ typedef enum
 	FAST_SPEED_TIME,
 	FAST_SPEED_CONFIRMATION,
 	END,
+	WAIT_FOR_RESET,
 }TeachStateMachine;
 
 void initTeachProcedure(void);
 void teachStateMachineHandler(void);
+void stepsTeachExtiCallback(uint16_t GPIO_Pin);
 
 #endif /* INC_TEACHSPEED_H_ */

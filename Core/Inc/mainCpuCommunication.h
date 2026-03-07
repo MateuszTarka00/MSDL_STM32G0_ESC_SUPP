@@ -21,4 +21,5 @@ bool getTeachInput(void);
 bool getFastSpeedState(void);
 bool getSlowSpeedState(void);
 bool getEndTeaching(void);
+bool getSoftwareStop(void);
 #endif /* INC_MAINCPUCOMMUNICATION_H_ */

@@ -32,6 +32,7 @@
 #include "flash.h"
 #include "engineFunctions.h"
 #include "sensors.h"
+#include "safetyCircuit.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -108,6 +109,7 @@ int main(void)
   bool rotationsState = TRUE;
   while (1)
   {
+	  HAL_IWDG_Refresh(&hiwdg);
 	  if(programState == TEACHING_STATE)
 	  {
 		  teachStateMachineHandler();
@@ -122,18 +124,19 @@ int main(void)
 		  else
 		  {
 			  setRotationOk(checkSetFrequency());
-			  setStandOk(checkSetFrequency());
+			  setStandControlTimer();
 			  rotationsState = checkSetFrequency();
 		  }
-
-		  setSafetyOk(checkSafetyOk());
 	  }
+	  setSafetyOk(checkSafetyOk());
+	  contactorsFunction();
 
 	  if(getFactoryReset())
 	  {
 		  flash_factoryReset();
 	  }
     /* USER CODE END WHILE */
+
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -185,7 +188,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 
   /* USER CODE END Callback 0 */
   /* USER CODE BEGIN Callback 1 */
-  if(htim->Instance == TIM17)
+  if(htim->Instance == TIM14)
   {
 	  timersHandler();
   }

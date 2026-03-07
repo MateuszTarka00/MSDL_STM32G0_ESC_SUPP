@@ -10,22 +10,22 @@
 
 void setSpeedReady(bool onOff)
 {
-	return HAL_GPIO_WritePin(SPEED_READY_GPIO_Port, SPEED_READY_Pin, onOff);
+	HAL_GPIO_WritePin(SPEED_READY_GPIO_Port, SPEED_READY_Pin, onOff);
 }
 
 void setSafetyOk(bool onOff)
 {
-	return HAL_GPIO_WritePin(SAFETY_OK_GPIO_Port, SAFETY_OK_Pin, onOff);
+	HAL_GPIO_WritePin(SAFETY_OK_GPIO_Port, SAFETY_OK_Pin, onOff);
 }
 
 void setStandOk(bool onOff)
 {
-	return HAL_GPIO_WritePin(STAND_OK_GPIO_Port, STAND_OK_Pin, onOff);
+	HAL_GPIO_WritePin(STAND_OK_GPIO_Port, STAND_OK_Pin, onOff);
 }
 
 void setRotationOk(bool onOff)
 {
-	return HAL_GPIO_WritePin(ROTATION_OK_GPIO_Port, ROTATION_OK_Pin, onOff);
+	HAL_GPIO_WritePin(ROTATION_OK_GPIO_Port, ROTATION_OK_Pin, onOff);
 }
 
 bool getTeachFast(void)
@@ -61,4 +61,9 @@ bool getSlowSpeedState(void)
 bool getEndTeaching(void)
 {
 	return HAL_GPIO_ReadPin(END_TEACHING_GPIO_Port, END_TEACHING_Pin);
+}
+
+bool getSoftwareStop(void)
+{
+	return HAL_GPIO_ReadPin(SOFTWARE_STOP_GPIO_Port, SOFTWARE_STOP_Pin);
 }

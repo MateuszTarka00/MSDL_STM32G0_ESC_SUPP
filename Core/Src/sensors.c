@@ -6,12 +6,9 @@
  */
 #include "sensors.h"
 
-#define INSPECTION_MODE_Pin GPIO_PIN_1
-#define INSPECTION_MODE_GPIO_Port GPIOB
-
 bool checkTargetFrequencyReached(void)
 {
-	return HAL_GPIO_ReadPin(ROTATION_CONTROL_GPIO_Port, ROTATION_CONTROL_Pin);
+	return HAL_GPIO_ReadPin(IN_FREQ_GPIO_Port, IN_FREQ_Pin);
 }
 
 bool checkInspectionMode(void)
