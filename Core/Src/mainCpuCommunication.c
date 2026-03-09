@@ -8,6 +8,8 @@
 
 #include "mainCpuCommunication.h"
 
+#define HEARTBIT_MS	500
+
 void setSpeedReady(bool onOff)
 {
 	HAL_GPIO_WritePin(SPEED_READY_GPIO_Port, SPEED_READY_Pin, onOff);
@@ -66,4 +68,26 @@ bool getEndTeaching(void)
 bool getSoftwareStop(void)
 {
 	return HAL_GPIO_ReadPin(SOFTWARE_STOP_GPIO_Port, SOFTWARE_STOP_Pin);
+}
+
+void setHeartBit(void)
+{
+	static bool heartBit = FALSE;
+	static uint32_t ticksTemp;
+
+
+	if(HAL_GetTick() - ticksTemp >= HEARTBIT_MS)
+	{
+		if(heartBit)
+		{
+			heartBit = FALSE;
+		}
+		else
+		{
+			heartBit = TRUE;
+		}
+
+		ticksTemp = HAL_GetTick();
+		setSpeedReady(heartBit);
+	}
 }

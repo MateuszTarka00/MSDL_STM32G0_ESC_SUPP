@@ -127,6 +127,8 @@ int main(void)
 			  setStandControlTimer();
 			  rotationsState = checkSetFrequency();
 		  }
+
+		  setHeartBit();
 	  }
 	  setSafetyOk(checkSafetyOk());
 	  contactorsFunction();

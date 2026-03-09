@@ -22,4 +22,5 @@ bool getFastSpeedState(void);
 bool getSlowSpeedState(void);
 bool getEndTeaching(void);
 bool getSoftwareStop(void);
+void setHeartBit(void);
 #endif /* INC_MAINCPUCOMMUNICATION_H_ */
