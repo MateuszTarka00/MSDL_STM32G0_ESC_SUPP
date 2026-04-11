@@ -52,14 +52,20 @@ void MX_GPIO_Init(void)
   __HAL_RCC_GPIOD_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, INSPECTION_MODE_Pin|SPEED_READY_Pin|SAFETY_OK_Pin|STAND_OK_Pin
-                          |ROTATION_OK_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, K2_INF_Pin|WATCHDOG_OUT_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(WATCHDOG_OUT_GPIO_Port, WATCHDOG_OUT_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, SPEED_READY_Pin|SAFETY_OK_Pin|STAND_OK_Pin|ROTATION_OK_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(K2_EN_GPIO_Port, K2_EN_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pins : K2_INF_Pin WATCHDOG_OUT_Pin */
+  GPIO_InitStruct.Pin = K2_INF_Pin|WATCHDOG_OUT_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   /*Configure GPIO pins : TEACH_INPUT_Pin ROTATION_CONTROL_Pin STAND_CONTROL_Pin FAST_SPEED_Pin
                            SLOW_SPEED_Pin */
@@ -69,18 +75,18 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : SAFETY_END_Pin TEACH_FAST_Pin FACTORY_RESET_Pin TEACH_SLOW_Pin
-                           SOFTWARE_STOP_Pin CHECK_UP_Pin CHECK_DOWN_Pin */
-  GPIO_InitStruct.Pin = SAFETY_END_Pin|TEACH_FAST_Pin|FACTORY_RESET_Pin|TEACH_SLOW_Pin
-                          |SOFTWARE_STOP_Pin|CHECK_UP_Pin|CHECK_DOWN_Pin;
+  /*Configure GPIO pins : SAFETY_END_Pin INSPECTION_MODE_Pin ACK_K2_Pin TEACH_FAST_Pin
+                           FACTORY_RESET_Pin TEACH_SLOW_Pin SOFTWARE_STOP_Pin CHECK_UP_Pin
+                           CHECK_DOWN_Pin */
+  GPIO_InitStruct.Pin = SAFETY_END_Pin|INSPECTION_MODE_Pin|ACK_K2_Pin|TEACH_FAST_Pin
+                          |FACTORY_RESET_Pin|TEACH_SLOW_Pin|SOFTWARE_STOP_Pin|CHECK_UP_Pin
+                          |CHECK_DOWN_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : INSPECTION_MODE_Pin SPEED_READY_Pin SAFETY_OK_Pin STAND_OK_Pin
-                           ROTATION_OK_Pin */
-  GPIO_InitStruct.Pin = INSPECTION_MODE_Pin|SPEED_READY_Pin|SAFETY_OK_Pin|STAND_OK_Pin
-                          |ROTATION_OK_Pin;
+  /*Configure GPIO pins : SPEED_READY_Pin SAFETY_OK_Pin STAND_OK_Pin ROTATION_OK_Pin */
+  GPIO_InitStruct.Pin = SPEED_READY_Pin|SAFETY_OK_Pin|STAND_OK_Pin|ROTATION_OK_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -91,13 +97,6 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : WATCHDOG_OUT_Pin */
-  GPIO_InitStruct.Pin = WATCHDOG_OUT_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(WATCHDOG_OUT_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pin : K2_EN_Pin */
   GPIO_InitStruct.Pin = K2_EN_Pin;

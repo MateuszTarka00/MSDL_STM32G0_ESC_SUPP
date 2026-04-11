@@ -61,6 +61,8 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define K2_INF_Pin GPIO_PIN_2
+#define K2_INF_GPIO_Port GPIOA
 #define TEACH_INPUT_Pin GPIO_PIN_3
 #define TEACH_INPUT_GPIO_Port GPIOA
 #define ROTATION_CONTROL_Pin GPIO_PIN_4
@@ -71,6 +73,8 @@ void Error_Handler(void);
 #define SAFETY_END_GPIO_Port GPIOB
 #define INSPECTION_MODE_Pin GPIO_PIN_1
 #define INSPECTION_MODE_GPIO_Port GPIOB
+#define ACK_K2_Pin GPIO_PIN_12
+#define ACK_K2_GPIO_Port GPIOB
 #define SPEED_READY_Pin GPIO_PIN_13
 #define SPEED_READY_GPIO_Port GPIOB
 #define TEACH_FAST_Pin GPIO_PIN_14

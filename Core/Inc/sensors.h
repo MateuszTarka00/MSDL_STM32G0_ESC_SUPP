@@ -13,5 +13,6 @@
 bool checkTargetFrequencyReached(void);
 bool checkInspectionMode(void);
 bool checkSafetyOk(void);
+bool getAckK2(void);
 
 #endif /* INC_SENSORS_H_ */

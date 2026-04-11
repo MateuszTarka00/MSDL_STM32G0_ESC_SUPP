@@ -12,31 +12,55 @@
 
 #define CONTACTOR_CLICK_TIME 200
 
+static bool contactorState = FALSE;
+static bool contactorFault = FALSE;
+
 void contactorsFunction(void)
 {
 	static uint8_t restartClicks = 6;
 	static uint32_t ticksTemp;
 
-	if(getSoftwareStop())
+	if(!contactorFault)
 	{
-		HAL_GPIO_WritePin(K2_EN_GPIO_Port, K2_EN_Pin, FALSE);
-		restartClicks = 6;
-	}
-	else
-	{
-		if(restartClicks)
+		if(getSoftwareStop())
 		{
-			if(HAL_GetTick() - ticksTemp >= CONTACTOR_CLICK_TIME)
-			{
-				HAL_GPIO_TogglePin(K2_EN_GPIO_Port, K2_EN_Pin);
-				ticksTemp = HAL_GetTick();
-				restartClicks--;
-			}
+			HAL_GPIO_WritePin(K2_EN_GPIO_Port, K2_EN_Pin, FALSE);
+			contactorState = FALSE;
+			setK2information(FALSE);
+			restartClicks = 6;
 		}
 		else
 		{
-			HAL_GPIO_WritePin(K2_EN_GPIO_Port, K2_EN_Pin, checkSafetyOk());
+			if(restartClicks)
+			{
+				if(HAL_GetTick() - ticksTemp >= CONTACTOR_CLICK_TIME)
+				{
+					if(getAckK2() == contactorState)
+					{
+						contactorState = !contactorState;
+						HAL_GPIO_WritePin(K2_EN_GPIO_Port, K2_EN_Pin, contactorState);
+						ticksTemp = HAL_GetTick();
+						restartClicks--;
+					}
+					else
+					{
+						contactorFault = TRUE;
+					}
+				}
+			}
+			else
+			{
+				contactorState = checkSafetyOk();
+				HAL_GPIO_WritePin(K2_EN_GPIO_Port, K2_EN_Pin, checkSafetyOk());
+			}
+
+			setK2information(checkSafetyOk());
 		}
+	}
+	else
+	{
+		setK2information(FALSE);
+		HAL_GPIO_WritePin(K2_EN_GPIO_Port, K2_EN_Pin, FALSE);
 	}
 }
 

@@ -23,4 +23,5 @@ bool getSlowSpeedState(void);
 bool getEndTeaching(void);
 bool getSoftwareStop(void);
 void setHeartBit(void);
+void setK2information(bool onOff);
 #endif /* INC_MAINCPUCOMMUNICATION_H_ */

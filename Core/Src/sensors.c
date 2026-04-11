@@ -20,3 +20,11 @@ bool checkSafetyOk(void)
 {
 	return HAL_GPIO_ReadPin(SAFETY_END_GPIO_Port, SAFETY_END_Pin);
 }
+
+#define ACK_K2_Pin GPIO_PIN_12
+#define ACK_K2_GPIO_Port GPIOB
+
+bool getAckK2(void)
+{
+	return HAL_GPIO_ReadPin(ACK_K2_GPIO_Port, ACK_K2_Pin);
+}

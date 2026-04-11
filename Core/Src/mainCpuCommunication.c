@@ -91,3 +91,8 @@ void setHeartBit(void)
 		setSpeedReady(heartBit);
 	}
 }
+
+void setK2information(bool onOff)
+{
+	HAL_GPIO_WritePin(K2_INF_GPIO_Port, K2_INF_Pin, onOff);
+}
