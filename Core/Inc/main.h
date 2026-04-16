@@ -95,10 +95,13 @@ void Error_Handler(void);
 #define K2_EN_GPIO_Port GPIOD
 #define ROTATION_S2_Pin GPIO_PIN_1
 #define ROTATION_S2_GPIO_Port GPIOD
+#define ROTATION_S2_EXTI_IRQn EXTI0_1_IRQn
 #define MIS_ST2_Pin GPIO_PIN_2
 #define MIS_ST2_GPIO_Port GPIOD
+#define MIS_ST2_EXTI_IRQn EXTI2_3_IRQn
 #define MIS_ST1_Pin GPIO_PIN_3
 #define MIS_ST1_GPIO_Port GPIOD
+#define MIS_ST1_EXTI_IRQn EXTI2_3_IRQn
 #define TEACH_SLOW_Pin GPIO_PIN_3
 #define TEACH_SLOW_GPIO_Port GPIOB
 #define SAFETY_OK_Pin GPIO_PIN_4

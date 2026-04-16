@@ -136,7 +136,7 @@ bool checkErrorRange(uint32_t real, uint32_t given)
 		errorRange = 1;
 	}
 
-	if((real <= (given + errorRange)) || (real >= (given - errorRange)))
+	if((real <= (given + errorRange)) && (real >= (given - errorRange)))
 	{
 		return TRUE;
 	}
@@ -222,7 +222,10 @@ void HAL_GPIO_EXTI_Rising_Callback(uint16_t GPIO_Pin)
 
 void setStandControlTimer(void)
 {
-	if(getFastSpeedState())
+	static bool fastSpeed = FALSE;
+	static bool slowSpeed = FALSE;
+
+	if(getFastSpeedState() && fastSpeed)
 	{
 		deInitSoftwareTimer(&stepsErrorTimer);
 		initSoftwareTimer(&stepsErrorTimer, rotationsPerMinuteGiven.engine.fastTime, stepsErrorTimerCallback, FALSE, 0);

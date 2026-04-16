@@ -17,6 +17,7 @@ ProgramStates programState = NORMAL_MODE;
 
 void startupFunction(void)
 {
+
 	if(flash_loadParameters())
 	{
 		rotationsLoadParameters();

@@ -108,8 +108,15 @@ void MX_GPIO_Init(void)
   /*Configure GPIO pins : ROTATION_S2_Pin MIS_ST2_Pin MIS_ST1_Pin */
   GPIO_InitStruct.Pin = ROTATION_S2_Pin|MIS_ST2_Pin|MIS_ST1_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
+
+  /* EXTI interrupt init*/
+  HAL_NVIC_SetPriority(EXTI0_1_IRQn, 1, 0);
+  HAL_NVIC_EnableIRQ(EXTI0_1_IRQn);
+
+  HAL_NVIC_SetPriority(EXTI2_3_IRQn, 1, 0);
+  HAL_NVIC_EnableIRQ(EXTI2_3_IRQn);
 
 }
 

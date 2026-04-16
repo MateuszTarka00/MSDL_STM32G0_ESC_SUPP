@@ -28,13 +28,13 @@ typedef struct __attribute__((packed))
 
 extern Flash_parametersToSave flash_parametersToSave;
 
-void Flash_ErasePage(uint32_t pageIndex);
-void Flash_WriteStruct(uint32_t pageIndex, const Flash_parametersToSave *data);
+static bool Flash_ErasePage(uint32_t pageIndex);
+static bool Flash_WriteStruct(uint32_t pageIndex, const Flash_parametersToSave *data);
 void Flash_ReadStruct(uint32_t pageIndex, Flash_parametersToSave *data);
-uint32_t Flash_GetPageAddress(uint32_t pageIndex);
+static uint32_t Flash_GetPageAddress(uint32_t pageIndex);
 uint8_t checkStructEmpty(const Flash_parametersToSave *data);
 uint32_t crc32_compute(const uint8_t *data, uint32_t length);
-void flash_parametersSave(void);
+bool flash_parametersSave(void);
 bool flash_loadParameters(void);
 void flash_factoryReset(void);
 

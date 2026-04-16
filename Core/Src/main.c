@@ -24,7 +24,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "softwareTimer_ms.h"
+//#include "softwareTimer_ms.h"
 #include "externalWatchdog.h"
 #include "systemStartup.h"
 #include "mainCpuCommunication.h"
@@ -96,20 +96,22 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_IWDG_Init();
+//  MX_IWDG_Init();
   MX_TIM14_Init();
   /* USER CODE BEGIN 2 */
   HAL_TIM_Base_Start_IT(&htim14);
   initWatchdogTimerInit();
+  HAL_Delay(500);
   startupFunction();
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   bool rotationsState = TRUE;
+
   while (1)
   {
-	  HAL_IWDG_Refresh(&hiwdg);
+//	  HAL_IWDG_Refresh(&hiwdg);
 	  if(programState == TEACHING_STATE)
 	  {
 		  teachStateMachineHandler();
@@ -124,7 +126,7 @@ int main(void)
 		  else
 		  {
 			  setRotationOk(checkSetFrequency());
-			  setStandControlTimer();
+//			  setStandControlTimer();
 			  rotationsState = checkSetFrequency();
 		  }
 
@@ -133,13 +135,23 @@ int main(void)
 	  setSafetyOk(checkSafetyOk());
 	  contactorsFunction();
 
-	  if(getFactoryReset())
+	  if(programState != TEACHING_STATE)
 	  {
-		  flash_factoryReset();
+			if(checkInspectionMode())
+			{
+				programState = INSPECTION_MODE;
+			}
+			else
+			{
+				programState = NORMAL_MODE;
+			}
 	  }
+
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+
   }
   /* USER CODE END 3 */
 }

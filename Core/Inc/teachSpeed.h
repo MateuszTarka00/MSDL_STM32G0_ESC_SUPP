@@ -25,6 +25,8 @@ typedef enum
 	WAIT_FOR_RESET,
 }TeachStateMachine;
 
+extern TeachStateMachine teachState;
+
 void initTeachProcedure(void);
 void teachStateMachineHandler(void);
 void stepsTeachExtiCallback(uint16_t GPIO_Pin);

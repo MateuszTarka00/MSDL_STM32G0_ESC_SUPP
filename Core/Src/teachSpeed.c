@@ -11,6 +11,7 @@
 #include "sensors.h"
 #include "mainCpuCommunication.h"
 #include "systemStartup.h"
+#include "flash.h"
 
 SoftwareTimerHandler teachTimer;
 TeachStateMachine teachState = PREPARATION;
@@ -29,12 +30,20 @@ void calculateTeachedSpeeds(bool slowFast)
 	if(slowFast)
 	{
 		rotationsPerMinuteGiven.engine.fastTime = rotationsPerMinuteGiven.engine.fastTime/10;
-		rotationsPerMinuteGiven.step.fastTime = gapsBetweenSteps/stepsCounted;
+
+		if(stepsCounted)
+		{
+			rotationsPerMinuteGiven.step.fastTime = gapsBetweenSteps/stepsCounted;
+		}
 	}
 	else
 	{
 		rotationsPerMinuteGiven.engine.slowTime = rotationsPerMinuteGiven.engine.slowTime/10;
-		rotationsPerMinuteGiven.step.slowTime = gapsBetweenSteps/stepsCounted;
+
+		if(stepsCounted)
+		{
+			rotationsPerMinuteGiven.step.slowTime = gapsBetweenSteps/stepsCounted;
+		}
 	}
 
 	gapsBetweenSteps = 0;
@@ -113,8 +122,9 @@ void teachStateMachineHandler(void)
 
 		case END:
 			deInitSoftwareTimer(&teachTimer);
-			initSpeedTimer();
+			teachState = WAIT_FOR_RESET;
 			rotationsSaveParameters();
+//			flash_parametersSave();
 			break;
 
 		case WAIT_FOR_RESET:
@@ -135,7 +145,7 @@ void stepsTeachExtiCallback(uint16_t GPIO_Pin)
 		{
 			if(steps1)
 			{
-				gapBetweenStepsTemp = xTaskGetTickCount() - gapBetweenStepsTemp;
+				gapBetweenStepsTemp = HAL_GetTick() - gapBetweenStepsTemp;
 				gapsBetweenSteps += gapBetweenStepsTemp;
 				gapBetweenStepsTemp = 0;
 			}
@@ -151,13 +161,13 @@ void stepsTeachExtiCallback(uint16_t GPIO_Pin)
 			if(steps2)
 			{
 				steps2 = FALSE;
-				gapBetweenStepsTemp = xTaskGetTickCount() - gapBetweenStepsTemp;
+				gapBetweenStepsTemp = HAL_GetTick() - gapBetweenStepsTemp;
 				gapsBetweenSteps += gapBetweenStepsTemp;
 				gapBetweenStepsTemp = 0;
 			}
 			else
 			{
-				gapBetweenStepsTemp = xTaskGetTickCount();
+				gapBetweenStepsTemp = HAL_GetTick();
 				stepsCounted++;
 				steps1 = TRUE;
 			}
