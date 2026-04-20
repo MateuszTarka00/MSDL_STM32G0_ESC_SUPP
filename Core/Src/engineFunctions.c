@@ -14,12 +14,12 @@
 #include "softwareTimer_ms.h"
 #include "systemStartup.h"
 #include "teachSpeed.h"
+#include "safetyCircuit.h"
 
 SoftwareTimerHandler checkSpeedTimer;
 static SoftwareTimerHandler stepsErrorTimer;
-static SoftwareTimerHandler changeSpeedDelay;
+static SoftwareTimerHandler speedErrorDelay;
 
-bool speedDelay = FALSE;
 volatile uint32_t engineRotationTemporary = 0;
 bool fastSpeedSet = FALSE;
 bool slowSpeedSet = FALSE;
@@ -36,16 +36,48 @@ RotationsPerMinute rotationsPerMinuteGiven =
 		{0, 0}
 };
 
-void speedDelayTimerCallback(void)
+static bool checkSetFrequencyTimerCallback(void)
 {
-	speedDelay = FALSE;
+	if(checkTargetFrequencyReached())
+	{
+		if(getFastSpeedState())
+		{
+			if(checkErrorRange(rotationsPerMinuteReal.engine.fastTime,  rotationsPerMinuteGiven.engine.fastTime))
+			{
+
+			}
+			else
+			{
+				errorSet = TRUE;
+				setRotationOk(FALSE);
+			}
+
+
+		}
+		else if(getSlowSpeedState())
+		{
+			if(checkErrorRange(rotationsPerMinuteReal.engine.slowTime,  rotationsPerMinuteGiven.engine.slowTime))
+			{
+
+			}
+			else
+			{
+				errorSet = TRUE;
+				setRotationOk(FALSE);
+			}
+
+		}
+	}
 }
 
 void initSpeedTimer(void)
 {
 	deInitSoftwareTimer(&checkSpeedTimer);
 	initSoftwareTimer(&checkSpeedTimer, SPEED_CHECK_MS, saveMeasuredRotationsValueTimerCallback, TRUE, &rotationsPerMinuteReal);
-	initSoftwareTimer(&changeSpeedDelay, SPEED_CHANGE_DELAY_MS, speedDelayTimerCallback, TRUE, 0);
+
+	deInitSoftwareTimer(&speedErrorDelay);
+	initSoftwareTimer(&speedErrorDelay, SPEED_DELAY_MS, checkSetFrequencyTimerCallback, FALSE, 0);
+
 	startSoftwareTimer(&checkSpeedTimer);
 }
 
@@ -56,9 +88,10 @@ void incrementRotationsNumber(uint16_t GPIO_Pin)
 
 static void stepsErrorTimerCallback(void *Param)
 {
-	if(programState == INSPECTION_MODE &&  getStandControl())
+	if(programState != INSPECTION_MODE && getStandControl())
 	{
 		setStandOk(FALSE);
+		errorSet = TRUE;
 	}
 }
 
@@ -95,30 +128,30 @@ bool checkSetFrequency(void)
 {
 	bool rotationsState = TRUE;
 
-	if(!speedDelay)
+	if(checkTargetFrequencyReached())
 	{
 		if(getFastSpeedState())
 		{
-			if(checkErrorRange(rotationsPerMinuteReal.engine.fastTime,  rotationsPerMinuteGiven.engine.fastTime) || !getRotationControl())
+			if(checkErrorRange(rotationsPerMinuteReal.engine.fastTime,  rotationsPerMinuteGiven.engine.fastTime))
 			{
-
+				stopSoftwareTimer(&speedErrorDelay);
 			}
 			else
 			{
-				rotationsState = FALSE;
+				startSoftwareTimer(&speedErrorDelay);
 			}
 
 
 		}
 		else if(getSlowSpeedState())
 		{
-			if(checkErrorRange(rotationsPerMinuteReal.engine.slowTime,  rotationsPerMinuteGiven.engine.slowTime) || !getRotationControl())
+			if(checkErrorRange(rotationsPerMinuteReal.engine.slowTime,  rotationsPerMinuteGiven.engine.slowTime))
 			{
-
+				stopSoftwareTimer(&speedErrorDelay);
 			}
 			else
 			{
-				rotationsState = FALSE;
+				startSoftwareTimer(&speedErrorDelay);
 			}
 
 		}
@@ -146,10 +179,10 @@ bool checkErrorRange(uint32_t real, uint32_t given)
 void rotationsLoadParameters(void)
 {
 	rotationsPerMinuteGiven.engine.fastTime   = flash_parametersToSave.flash_RotationsPerMinuteFast.engine;
-	rotationsPerMinuteGiven.step.fastTime     = flash_parametersToSave.flash_RotationsPerMinuteFast.step;
+	rotationsPerMinuteGiven.step.fastTime     = flash_parametersToSave.flash_RotationsPerMinuteFast.step + (flash_parametersToSave.flash_RotationsPerMinuteFast.step/10);
 
 	rotationsPerMinuteGiven.engine.slowTime   = flash_parametersToSave.flash_RotationsPerMinuteSlow.engine;
-	rotationsPerMinuteGiven.step.slowTime     = flash_parametersToSave.flash_RotationsPerMinuteSlow.step;
+	rotationsPerMinuteGiven.step.slowTime     = flash_parametersToSave.flash_RotationsPerMinuteSlow.step + (flash_parametersToSave.flash_RotationsPerMinuteSlow.step/10);
 }
 
 void rotationsSaveParameters(void)
@@ -168,7 +201,7 @@ void stepsNormalExtiCallback(uint16_t GPIO_Pin)
 	static bool steps1 = FALSE;
 	static bool steps2 = FALSE;
 
-	if(checkTargetFrequencyReached())
+	if(checkTargetFrequencyReached() && getTeachFast())
 	{
 		if(GPIO_Pin == MIS_ST2_Pin)
 		{
@@ -204,7 +237,7 @@ void HAL_GPIO_EXTI_Rising_Callback(uint16_t GPIO_Pin)
 	switch(GPIO_Pin)
 	{
 	case ROTATION_S2_Pin:
-		incrementRotationsNumber(GPIO_Pin);;
+		incrementRotationsNumber(GPIO_Pin);
 		break;
 
 	case MIS_ST1_Pin:
@@ -225,19 +258,28 @@ void setStandControlTimer(void)
 	static bool fastSpeed = FALSE;
 	static bool slowSpeed = FALSE;
 
-	if(getFastSpeedState() && fastSpeed)
+	if(checkTargetFrequencyReached())
 	{
-		deInitSoftwareTimer(&stepsErrorTimer);
-		initSoftwareTimer(&stepsErrorTimer, rotationsPerMinuteGiven.engine.fastTime, stepsErrorTimerCallback, FALSE, 0);
-		speedDelay = TRUE;
-		startSoftwareTimer(&changeSpeedDelay);
+		if(getFastSpeedState() && !fastSpeed)
+		{
+			fastSpeed = TRUE;
+			slowSpeed = FALSE;
+			deInitSoftwareTimer(&stepsErrorTimer);
+			initSoftwareTimer(&stepsErrorTimer, rotationsPerMinuteGiven.engine.fastTime, stepsErrorTimerCallback, FALSE, 0);
+		}
+		else if(getSlowSpeedState() && !slowSpeed)
+		{
+			fastSpeed = FALSE;
+			slowSpeed = TRUE;
+			deInitSoftwareTimer(&stepsErrorTimer);
+			initSoftwareTimer(&stepsErrorTimer, rotationsPerMinuteGiven.engine.slowTime, stepsErrorTimerCallback, FALSE, 0);
+		}
 	}
-	else if(getSlowSpeedState())
+	else
 	{
+		fastSpeed = FALSE;
+		slowSpeed = FALSE;
 		deInitSoftwareTimer(&stepsErrorTimer);
-		initSoftwareTimer(&stepsErrorTimer, rotationsPerMinuteGiven.engine.slowTime, stepsErrorTimerCallback, FALSE, 0);
-		speedDelay = TRUE;
-		startSoftwareTimer(&changeSpeedDelay);
 	}
 }
 

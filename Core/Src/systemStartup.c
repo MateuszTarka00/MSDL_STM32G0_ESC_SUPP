@@ -40,4 +40,7 @@ void startupFunction(void)
 		}
 		initSpeedTimer();
 	}
+
+	  setRotationOk(TRUE);
+	  setStandOk(TRUE);
 }

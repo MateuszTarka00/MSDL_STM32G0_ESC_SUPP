@@ -15,12 +15,14 @@
 static bool contactorState = FALSE;
 static bool contactorFault = FALSE;
 
+bool errorSet = FALSE;
+
 void contactorsFunction(void)
 {
 	static uint8_t restartClicks = 6;
 	static uint32_t ticksTemp;
 
-	if(!contactorFault)
+	if(!contactorFault && !errorSet)
 	{
 		if(getSoftwareStop())
 		{

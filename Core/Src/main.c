@@ -64,7 +64,8 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+//teach slow - service mode
+//teach fast - step check
 /* USER CODE END 0 */
 
 /**
@@ -96,12 +97,12 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-//  MX_IWDG_Init();
   MX_TIM14_Init();
   /* USER CODE BEGIN 2 */
   HAL_TIM_Base_Start_IT(&htim14);
   initWatchdogTimerInit();
   HAL_Delay(500);
+  MX_IWDG_Init();
   startupFunction();
   /* USER CODE END 2 */
 
@@ -111,22 +112,21 @@ int main(void)
 
   while (1)
   {
-//	  HAL_IWDG_Refresh(&hiwdg);
+	  HAL_IWDG_Refresh(&hiwdg);
 	  if(programState == TEACHING_STATE)
 	  {
 		  teachStateMachineHandler();
 	  }
 	  else
 	  {
-		  if(programState == INSPECTION_MODE)
+		  if(programState == INSPECTION_MODE && getTeachSlow())
 		  {
 			  setRotationOk(TRUE);
 			  setStandOk(TRUE);
 		  }
 		  else
 		  {
-			  setRotationOk(checkSetFrequency());
-//			  setStandControlTimer();
+			  setStandControlTimer();
 			  rotationsState = checkSetFrequency();
 		  }
 

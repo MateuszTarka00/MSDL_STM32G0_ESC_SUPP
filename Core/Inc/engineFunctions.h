@@ -13,7 +13,7 @@
 
 #define FREQUENCY_ERROR_RANGE 	10
 #define SPEED_CHECK_MS			1000
-#define SPEED_CHANGE_DELAY_MS	1500
+#define SPEED_DELAY_MS			6000
 
 extern volatile uint32_t engineRotationTemporary;
 

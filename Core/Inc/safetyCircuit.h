@@ -10,6 +10,8 @@
 
 #include "main.h"
 
+extern bool errorSet;
+
 void contactorsFunction(void);
 
 #endif /* INC_SAFETYCIRCUIT_H_ */

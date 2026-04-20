@@ -145,6 +145,7 @@ void stepsTeachExtiCallback(uint16_t GPIO_Pin)
 		{
 			if(steps1)
 			{
+				steps1 = FALSE;
 				gapBetweenStepsTemp = HAL_GetTick() - gapBetweenStepsTemp;
 				gapsBetweenSteps += gapBetweenStepsTemp;
 				gapBetweenStepsTemp = 0;
