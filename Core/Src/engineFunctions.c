@@ -138,7 +138,10 @@ bool checkSetFrequency(void)
 			}
 			else
 			{
-				startSoftwareTimer(&speedErrorDelay);
+				if(!speedErrorDelay.start)
+				{
+					startSoftwareTimer(&speedErrorDelay);
+				}
 			}
 
 
@@ -151,10 +154,17 @@ bool checkSetFrequency(void)
 			}
 			else
 			{
-				startSoftwareTimer(&speedErrorDelay);
+				if(!speedErrorDelay.start)
+				{
+					startSoftwareTimer(&speedErrorDelay);
+				}
 			}
 
 		}
+	}
+	else
+	{
+		stopSoftwareTimer(&speedErrorDelay);
 	}
 
 	return rotationsState;
