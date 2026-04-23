@@ -66,6 +66,7 @@ void teachStateMachineHandler(void)
 			if(checkTargetFrequencyReached())
 			{
 				setSpeedReady(TRUE);
+				engineRotationTemporary = 0;
 				startSoftwareTimer(&teachTimer);
 				teachState = SLOW_SPEED_TIME;
 			}
@@ -95,6 +96,7 @@ void teachStateMachineHandler(void)
 			if(checkTargetFrequencyReached())
 			{
 				setSpeedReady(TRUE);
+				engineRotationTemporary = 0;
 				startSoftwareTimer(&teachTimer);
 				teachState = FAST_SPEED_TIME;
 			}
